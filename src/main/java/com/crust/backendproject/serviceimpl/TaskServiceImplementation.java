@@ -1,7 +1,8 @@
 package com.crust.backendproject.serviceimpl;
 
 import com.crust.backendproject.audit.AuditAware;
-import com.crust.backendproject.dto.request.TaskRequest;
+import com.crust.backendproject.dto.request.CreateTaskRequest;
+import com.crust.backendproject.dto.request.UpdateTaskRequest;
 import com.crust.backendproject.dto.response.MessageResponse;
 import com.crust.backendproject.exception.AppException;
 import com.crust.backendproject.models.Task;
@@ -28,7 +29,7 @@ public class TaskServiceImplementation implements TaskService {
 
 
     @Override
-    public Task createTask(TaskRequest taskRequest) {
+    public Task createTask(CreateTaskRequest taskRequest) {
 
         return taskRepository.save(Task.builder()
                 .description(taskRequest.getDescription())
@@ -37,7 +38,7 @@ public class TaskServiceImplementation implements TaskService {
     }
 
     @Override
-    public Task updateTask(Long taskId, TaskRequest updateTaskRequest) {
+    public Task updateTask(Long taskId, UpdateTaskRequest updateTaskRequest) {
 
         Long userId = auditAware.getCurrentAuditor()
                 .orElseThrow(() -> new AppException(Errors.UNAUTHORIZED));
@@ -48,9 +49,9 @@ public class TaskServiceImplementation implements TaskService {
         Task task = taskRepository.findByIdAndCreatedBy(taskId, userId)
                 .orElseThrow(() -> new AppException(Errors.TASK_NOT_FOUND));
 
-        if (UtilClass.isNull(updateTaskRequest.getTitle()))
+        if (!UtilClass.isNull(updateTaskRequest.getTitle()))
             task.setTitle(updateTaskRequest.getTitle());
-        if (UtilClass.isNull(updateTaskRequest.getDescription()))
+        if (!UtilClass.isNull(updateTaskRequest.getDescription()))
             task.setDescription(updateTaskRequest.getDescription());
 
         return taskRepository.save(task);
@@ -73,7 +74,7 @@ public class TaskServiceImplementation implements TaskService {
         Long userId = auditAware.getCurrentAuditor()
                 .orElseThrow(() -> new AppException(Errors.UNAUTHORIZED));
 
-        Pageable page = new OffsetBasedPageRequest(offset, limit, Sort.Direction.ASC, "name");
+        Pageable page = new OffsetBasedPageRequest(offset, limit, Sort.Direction.ASC, "id");
         return taskRepository.findAllByCreatedBy(userId, page);
 
     }

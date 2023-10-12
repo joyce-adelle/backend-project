@@ -39,7 +39,7 @@ public class UnauthenticatedServiceImplementation implements UnauthenticatedServ
     private final JwtService jwtService;
 
     @Override
-    public LoginResponse signUp(SignUpRequest signUpRequest) {
+    public MessageResponse signUp(SignUpRequest signUpRequest) {
 
         boolean checkEmail = userRepository.existsByEmailIgnoreCase(signUpRequest.getEmail());
         if (checkEmail)
@@ -49,10 +49,9 @@ public class UnauthenticatedServiceImplementation implements UnauthenticatedServ
                 .password(passwordEncoder.encode(signUpRequest.getPassword())).name(signUpRequest.getName())
                 .role(Roles.USER).isVerified(false).build();
 
-        User saved = userRepository.save(user);
-
         try {
 
+            userRepository.save(user);
             String token = UtilClass.generateOtp();
             OTP verificationOtp = OTP.builder().otp(token).email(user.getEmail().toLowerCase())
                     .expiredAt(Instant.now().plus(10, ChronoUnit.MINUTES)).build();
@@ -70,14 +69,8 @@ public class UnauthenticatedServiceImplementation implements UnauthenticatedServ
             throw new AppException(Errors.ERROR_OCCURRED_PERFORMING_ACTION);
         }
 
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(saved.getEmail(), signUpRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return MessageResponse.builder().message("Signup Successful").build();
 
-        return LoginResponse.builder()
-                .user(saved)
-                .token(jwtService.generateToken(authentication))
-                .build();
     }
 
     @Override

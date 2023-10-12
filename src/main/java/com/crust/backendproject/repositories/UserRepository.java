@@ -1,6 +1,7 @@
 package com.crust.backendproject.repositories;
 
 import com.crust.backendproject.models.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
     boolean existsByEmailIgnoreCase(String email);
 
     @Modifying
+    @Transactional
     @Query("UPDATE User u  SET u.password = ?1 WHERE u.email = ?2")
     void updatePasswordByEmail(String password, String email);
 

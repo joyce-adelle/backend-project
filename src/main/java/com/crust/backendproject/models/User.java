@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -38,7 +39,7 @@ public class User {
     @Column(name = "email", length = 50, unique = true)
     private String email;
 
-    @NotBlank
+    @NotNull
     @Column(name = "is_verified", columnDefinition = "boolean default false")
     private Boolean isVerified;
 
