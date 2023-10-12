@@ -2,6 +2,7 @@ package com.crust.backendproject.audit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -23,18 +24,22 @@ public class Auditable {
 
     @JsonIgnore
     @CreatedBy
+    @Column(name = "created_by")
     private Long createdBy;
 
     @JsonProperty
     @CreatedDate
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @JsonIgnore
     @LastModifiedBy
+    @Column(name = "updated_by")
     private Long updatedBy;
 
     @JsonProperty
     @LastModifiedDate
+    @Column(name = "updated_at")
     private Instant updatedAt;
 
 }

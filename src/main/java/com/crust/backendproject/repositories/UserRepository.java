@@ -16,7 +16,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
     boolean existsByEmailIgnoreCase(String email);
 
     @Modifying
-    @Query("UPDATE user  SET user.password = ?1 WHERE user.email = ?2")
+    @Query("UPDATE User u  SET u.password = ?1 WHERE u.email = ?2")
     void updatePasswordByEmail(String password, String email);
 
     List<User> findAll(Pageable pageable);

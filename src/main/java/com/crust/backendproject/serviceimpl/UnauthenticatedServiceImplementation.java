@@ -8,6 +8,7 @@ import com.crust.backendproject.exception.AppException;
 import com.crust.backendproject.models.OTP;
 import com.crust.backendproject.models.User;
 import com.crust.backendproject.repositories.UserRepository;
+import com.crust.backendproject.security.JwtService;
 import com.crust.backendproject.service.OTPService;
 import com.crust.backendproject.service.UnauthenticatedService;
 import com.crust.backendproject.util.Errors;
@@ -35,6 +36,7 @@ public class UnauthenticatedServiceImplementation implements UnauthenticatedServ
     private final PasswordEncoder passwordEncoder;
     private final OTPService otpService;
     private final EmailSender emailSender;
+    private final JwtService jwtService;
 
     @Override
     public LoginResponse signUp(SignUpRequest signUpRequest) {
@@ -68,8 +70,13 @@ public class UnauthenticatedServiceImplementation implements UnauthenticatedServ
             throw new AppException(Errors.ERROR_OCCURRED_PERFORMING_ACTION);
         }
 
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(saved.getEmail(), signUpRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         return LoginResponse.builder()
                 .user(saved)
+                .token(jwtService.generateToken(authentication))
                 .build();
     }
 
@@ -122,7 +129,7 @@ public class UnauthenticatedServiceImplementation implements UnauthenticatedServ
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             return LoginResponse.builder().user(user)
-//                    .token(jwtService.generateToken(authentication))
+                    .token(jwtService.generateToken(authentication))
                     .build();
         } catch (Exception e) {
             log.error(e.getMessage(), e.getCause());
