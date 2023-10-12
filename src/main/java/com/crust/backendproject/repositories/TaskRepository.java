@@ -7,11 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository extends CrudRepository<Task, Long> {
 
     List<Task> findAllByCreatedBy(@NotNull @Min(1L) Long userId, Pageable pageable);
 
-    Task findByIdAndCreatedBy(@NotNull @Min(1L) Long id, @NotNull @Min(1L) Long userId);
+    Optional<Task> findByIdAndCreatedBy(@NotNull @Min(1L) Long id, @NotNull @Min(1L) Long userId);
+
+    void deleteByIdAndCreatedBy(@NotNull @Min(1L) Long id, @NotNull @Min(1L) Long userId);
 
 }

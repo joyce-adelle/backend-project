@@ -6,7 +6,7 @@ import com.crust.backendproject.dto.response.MessageResponse;
 
 public interface UnauthenticatedService {
 
-	MessageResponse signUp(SignUpRequest signUpRequest);
+	LoginResponse signUp(SignUpRequest signUpRequest);
 
 	MessageResponse verifyOtp(OTPVerificationRequest requestOtp);
 
